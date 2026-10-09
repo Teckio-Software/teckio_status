@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Estado de Teckio</title>
+    <meta name="description" content="Disponibilidad en tiempo real de Teckio ERP: aplicación web, ERP, inicio de sesión y Documentación." />
+    <link rel="icon" href="teckio.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block"
+      rel="stylesheet"
+    />
+    <style>
+      /* Paleta del ERP (tailwind.config.js de teckio_frontend). */
+      :root {
+        --primario: #1c398e;
+        --gris: #f9fafb;
+        --gray100: #f3f4f6;
+        --gray200: #e5e7eb;
+        --gray300: #d1d5dc;
+        --gray400: #99a1af;
+        --gray500: #6a7282;
+        --gray700: #364153;
+        --green100: #dcfce7;
+        --green600: #00a63e;
+        --amber100: #fef3c6;
+        --amber500: #fd9a00;
+        --amber600: #e17100;
+        --red100: #ffe2e2;
+        --red600: #e7000b;
+        --red700: #c10007;
+        --blue100: #dbeafe;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--gris);
+        color: var(--gray700);
+        font-family: Roboto, system-ui, sans-serif;
+        font-size: 14px;
+        line-height: normal;
+        letter-spacing: normal;
+      }
+      .icono { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; }
+
+      /* Barra superior, como el topbar del ERP. */
+      .topbar { height: 64px; background: #fff; border-bottom: 1px solid var(--gray200); }
+      .topbar-contenido { max-width: 880px; height: 100%; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 12px; }
+      .topbar img { width: 36px; height: 36px; }
+      .marca { font-size: 20px; font-weight: 500; color: var(--primario); }
+      .topbar .separador { width: 1px; height: 24px; background: var(--gray200); }
+      .topbar .titulo { font-size: 14px; font-weight: 500; color: var(--gray500); }
+      .topbar .enlace { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 6px; background: var(--primario); color: #fff; font-size: 12.5px; font-weight: 500; text-decoration: none; }
+      .topbar .enlace:hover { background: #162456; }
+
+      main { max-width: 880px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
+
+      /* Tarjeta del ERP: blanca, borde gris, esquinas de 10 px. */
+      .tarjeta { background: #fff; border: 1px solid var(--gray200); border-radius: 10px; overflow: hidden; }
+      .tarjeta-titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--gray200); }
+      .tarjeta-titulo b { font-size: 16px; font-weight: 500; }
+      .tarjeta-titulo span { font-size: 11.5px; color: var(--gray500); }
+
+      /* Resumen general. */
+      .resumen { display: flex; align-items: center; gap: 16px; padding: 20px; }
+      .resumen .circulo { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
+      .resumen .circulo .icono { font-size: 28px; }
+      .resumen .texto b { display: block; font-size: 16px; font-weight: 500; }
+      .resumen .texto span { font-size: 12.5px; color: var(--gray500); }
+      .ok .circulo { background: var(--green100); color: var(--green600); }
+      .aviso .circulo { background: var(--amber100); color: var(--amber600); }
+      .falla .circulo { background: var(--red100); color: var(--red700); }
+      .sin-datos .circulo { background: var(--gray100); color: var(--gray500); }
+
+      /* Servicios. */
+      .servicio { padding: 16px 20px; border-top: 1px solid var(--gray200); }
+      .servicio:first-of-type { border-top: 0; }
+      .servicio-cabecera { display: flex; align-items: center; gap: 12px; }
+      .servicio-icono { width: 36px; height: 36px; border-radius: 8px; background: var(--blue100); color: var(--primario); display: flex; align-items: center; justify-content: center; flex: none; }
+      .servicio-icono .icono { font-size: 20px; }
+      .servicio-nombre { flex: 1; min-width: 0; }
+      .servicio-nombre b { display: block; font-size: 14px; font-weight: 500; }
+      .servicio-nombre span { font-size: 11.5px; color: var(--gray500); }
+      .chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+      .chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+      .chip.operando { background: var(--green100); color: var(--green600); }
+      .chip.intermitente { background: var(--amber100); color: var(--amber600); }
+      .chip.caido { background: var(--red100); color: var(--red700); }
+      .chip.pausado, .chip.pendiente { background: var(--gray100); color: var(--gray500); }
+
+      .barras { display: flex; gap: 3px; height: 32px; margin-top: 14px; }
+      .barra { flex: 1; border-radius: 3px; background: var(--gray200); }
+      .barra.b100 { background: var(--green600); }
+      .barra.b99 { background: #7bf1a8; }
+      .barra.b95 { background: var(--amber500); }
+      .barra.b0 { background: var(--red600); }
+      .barras-pie { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11.5px; color: var(--gray500); }
+      .barras-pie b { color: var(--gray700); font-weight: 500; }
+
+      /* Caídas recientes. */
+      .caida { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-top: 1px solid var(--gray200); }
+      .caida:first-of-type { border-top: 0; }
+      .caida .icono { color: var(--red700); font-size: 20px; }
+      .caida .detalle { flex: 1; min-width: 0; }
+      .caida .detalle b { display: block; font-weight: 500; }
+      .caida .detalle span { font-size: 11.5px; color: var(--gray500); }
+      .vacio { padding: 20px; text-align: center; color: var(--gray500); font-size: 12.5px; }
+
+      footer { text-align: center; font-size: 11.5px; color: var(--gray500); }
+      footer a { color: var(--primario); text-decoration: none; font-weight: 500; }
+
+      @media (max-width: 560px) {
+        .topbar .separador, .topbar .titulo { display: none; }
+        .barras { gap: 2px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-contenido">
+        <img src="teckio.svg" alt="" />
+        <span class="marca">Teckio ERP</span>
+        <span class="separador"></span>
+        <span class="titulo">Estado de los servicios</span>
+        <a class="enlace" href="https://teckio.mx"><span class="icono" style="font-size: 17px">open_in_new</span>Ir a Teckio</a>
+      </div>
+    </div>
+
+    <main>
+      <section id="resumen" class="tarjeta resumen sin-datos">
+        <div class="circulo"><span class="icono">schedule</span></div>
+        <div class="texto"><b>Consultando el estado…</b><span>Un momento.</span></div>
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-titulo"><b>Servicios</b><span>Últimos 30 días</span></div>
+        <div id="servicios"><div class="vacio">Cargando…</div></div>
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-titulo"><b>Caídas recientes</b><span>Hora del centro de México</span></div>
+        <div id="caidas"><div class="vacio">Cargando…</div></div>
+      </section>
+
+      <footer>Monitoreo cada minuto · <a href="https://teckio.mx">teckio.mx</a></footer>
+    </main>
+
+    <script>
+      // Orden y descripción de los servicios, por el nombre del monitor en UptimeRobot.
+      const SERVICIOS = {
+        Frontend: { descripcion: 'Aplicación web de Teckio ERP', icono: 'web' },
+        ERP: { descripcion: 'Proyectos, compras, almacenes, contabilidad y más', icono: 'apartment' },
+        SSO: { descripcion: 'Inicio de sesión y usuarios', icono: 'lock' },
+        'Documentación': { descripcion: 'Explorador de archivos y planos', icono: 'folder' },
+      };
+      const ORDEN = Object.keys(SERVICIOS);
+      const TEXTO_ESTADO = {
+        operando: 'Operando',
+        intermitente: 'Intermitente',
+        caido: 'Caído',
+        pausado: 'En mantenimiento',
+        pendiente: 'Sin datos aún',
+      };
+      const fecha = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Mexico_City' });
+      const dia = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short', timeZone: 'America/Mexico_City' });
+
+      const porcentaje = (n) => (n == null ? '—' : `${n.toFixed(n >= 99.995 ? 0 : 2)}%`);
+      const duracion = (s) => (s < 60 ? `${s} s` : s < 3600 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`);
+      const escapar = (t) =>
+        String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+      const claseBarra = (d) => (d == null ? '' : d >= 99.995 ? 'b100' : d >= 99 ? 'b99' : d >= 95 ? 'b95' : 'b0');
+      const posicion = (m) => (ORDEN.includes(m.nombre) ? ORDEN.indexOf(m.nombre) : ORDEN.length);
+
+      function pintarResumen(clase, icono, titulo, detalle) {
+        const r = document.getElementById('resumen');
+        r.className = `tarjeta resumen ${clase}`;
+        r.innerHTML = `<div class="circulo"><span class="icono">${icono}</span></div>
+          <div class="texto"><b>${titulo}</b><span>${detalle}</span></div>`;
+      }
+
+      function pintar({ monitores, actualizado }) {
+        monitores = [...monitores].sort((a, b) => posicion(a) - posicion(b));
+        const caidos = monitores.filter((m) => m.estado === 'caido').length;
+        const raros = monitores.filter((m) => m.estado === 'intermitente').length;
+        const cuando = `Actualizado ${fecha.format(actualizado)}`;
+        if (caidos)
+          pintarResumen('falla', 'error', caidos === 1 ? 'Un servicio está caído' : `${caidos} servicios están caídos`, `Ya estamos trabajando en ello. ${cuando}`);
+        else if (raros) pintarResumen('aviso', 'warning', 'Algunos servicios presentan intermitencias', cuando);
+        else pintarResumen('ok', 'check_circle', 'Todos los servicios operan con normalidad', cuando);
+
+        document.getElementById('servicios').innerHTML = monitores.length
+          ? monitores
+              .map((m) => {
+                const info = SERVICIOS[m.nombre] ?? { descripcion: '', icono: 'dns' };
+                const barras = m.dias
+                  .map((d) => `<span class="barra ${claseBarra(d.disponibilidad)}" title="${dia.format(d.fecha)}: ${d.disponibilidad == null ? 'sin datos' : porcentaje(d.disponibilidad)}"></span>`)
+                  .join('');
+                return `<div class="servicio">
+                  <div class="servicio-cabecera">
+                    <span class="servicio-icono"><span class="icono">${info.icono}</span></span>
+                    <span class="servicio-nombre"><b>${escapar(m.nombre)}</b><span>${escapar(info.descripcion)}</span></span>
+                    <span class="chip ${m.estado}">${TEXTO_ESTADO[m.estado]}</span>
+                  </div>
+                  <div class="barras">${barras}</div>
+                  <div class="barras-pie"><span>Hace 30 días</span><span><b>${porcentaje(m.disponibilidad30)}</b> disponible · <b>${porcentaje(m.disponibilidad90)}</b> en 90 días</span><span>Hoy</span></div>
+                </div>`;
+              })
+              .join('')
+          : '<div class="vacio">Sin servicios configurados.</div>';
+
+        const caidas = monitores
+          .flatMap((m) => m.caidas.map((c) => ({ ...c, nombre: m.nombre })))
+          .sort((a, b) => b.inicio - a.inicio)
+          .slice(0, 10);
+        document.getElementById('caidas').innerHTML = caidas.length
+          ? caidas
+              .map(
+                (c) => `<div class="caida">
+                  <span class="icono">error</span>
+                  <span class="detalle"><b>${escapar(c.nombre)}</b><span>${fecha.format(c.inicio)}</span></span>
+                  <span class="chip pendiente">Duró ${duracion(c.duracion)}</span>
+                </div>`,
+              )
+              .join('')
+          : '<div class="vacio">Sin caídas recientes.</div>';
+      }
+
+      async function cargar() {
+        try {
+          const r = await fetch('/api/estado', { cache: 'no-store' });
+          if (!r.ok) throw new Error();
+          pintar(await r.json());
+        } catch {
+          pintarResumen('sin-datos', 'cloud_off', 'No pudimos consultar el estado', 'Reintentando en un minuto…');
+        }
+      }
+
+      cargar();
+      setInterval(cargar, 60_000);
+    </script>
+  </body>
+</html>
